@@ -1,16 +1,11 @@
 import db from '@/initializers/db';
 import { User } from '@/models/user';
+import { Result } from '@/utils/types';
 import bcrypt from 'bcrypt';
 
 interface Credientials {
   password: string;
   email: string;
-}
-
-interface Result<T> {
-  message: string;
-  data: T;
-  code: number;
 }
 
 export async function registerUser(creds: Credientials): Promise<Result<User | null>> {
@@ -45,12 +40,6 @@ export async function registerUser(creds: Credientials): Promise<Result<User | n
   }
 }
 
-export async function loginUser(creds: Credientials) {
-  const user = await getUserByEmail(creds.email);
-
-  return user;
-}
-
 export async function getUsers(): Promise<User[]> {
   return db.any('SELECT * FROM users');
 }
@@ -62,19 +51,21 @@ export async function getUser(email: User['email']): Promise<User | null> {
     const user = db.oneOrNone<User>('SELECT * FROM users WHERE email = $1', email);
     return user;
   } catch (error) {
-    throw error;
+    console.log(error);
+    return null;
   }
 }
 export async function saveUser(user: { email: string; hashedPw: string }): Promise<User | null> {
   try {
-    await db.none('INSERT INTO users (email, password) VALUES ($1, $2)', [
+    await db.none('INSERT INTO users (email, "password") VALUES ($1, $2)', [
       user.email,
       user.hashedPw,
     ]);
     const newUser = await getUserByEmail(user.email);
     return newUser;
   } catch (error) {
-    throw error;
+    console.log(error);
+    return null;
   }
 }
 export async function hashPassword(pw: string): Promise<string> {
@@ -91,6 +82,6 @@ export async function validatePassword(password: string, hashedPassword: string)
     const match = await bcrypt.compare(password, hashedPassword);
     return match;
   } catch (error) {
-    throw error;
+    console.log(error);
   }
 }

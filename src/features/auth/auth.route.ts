@@ -1,5 +1,5 @@
 import express from 'express';
-import { loginUser, registerUser } from '@feat/auth/auth.service';
+import { registerUser } from '@feat/auth/auth.service';
 import passport from 'passport';
 import isAuthenticated from './isAuthenticated.middleware';
 

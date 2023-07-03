@@ -5,8 +5,7 @@ const router = express.Router();
 
 router.get('/api/health', async (req, res) => {
   try {
-    const data = await db.any('SELECT * FROM users');
-    res.json({ users: data });
+    res.json({ message: 'up and running' });
   } catch (error) {
     res.json({ message: error });
   }
